@@ -1,1 +1,1 @@
-# react-native-skignature
+# react-native-signature
