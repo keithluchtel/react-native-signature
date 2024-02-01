@@ -41,8 +41,11 @@ export const Canvas = () => {
         ...cachedStrokes.value,
         Skia.Path.MakeFromSVGString(currentStroke.value) as SkPath
       ];
+
       currentStroke.value = '';
-    });
+    })
+    .minPointers(1)
+    .maxPointers(1);
 
   return (
     <GestureDetector gesture={panGesture}>
