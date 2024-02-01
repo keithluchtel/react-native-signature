@@ -1,22 +1,28 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import {Canvas} from "../lib/src/components/Canvas";
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Canvas} from "react-native-signature";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <GestureHandlerRootView style={{flex: 1}}>
       <StatusBar style="auto" />
-      <Canvas />
-    </View>
+      <SafeAreaView style={styles.container}>
+        <Text>Open up App.tsx to start working on your app!</Text>
+        <View style={styles.section}>
+          <Canvas />
+        </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
   },
+  section: {
+    flex: 1
+  }
 });
