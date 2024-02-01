@@ -28,6 +28,7 @@ export const Canvas = () => {
       }
     })
   ), [cachedStrokes]);
+
   const panGesture = Gesture.Pan()
     .onBegin((e) => {
       currentStroke.value = `M ${e.x} ${e.y} L ${e.x} ${e.y}`
@@ -35,7 +36,7 @@ export const Canvas = () => {
     .onChange((e) => {
       currentStroke.value += ` L ${e.x} ${e.y}`
     })
-    .onEnd(() => {
+    .onFinalize(() => {
       cachedStrokes.value = [
         ...cachedStrokes.value,
         Skia.Path.MakeFromSVGString(currentStroke.value) as SkPath
