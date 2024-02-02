@@ -5,16 +5,36 @@ import {
   Path,
   Picture,
   Skia,
+  type SkImage,
   type SkPath,
   StrokeCap,
+  useCanvasRef,
 } from "@shopify/react-native-skia";
+import { forwardRef, useImperativeHandle } from "react";
 import { StyleSheet } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 
-export const Canvas = () => {
+export type CanvasHandle = {
+  makeImageSnapshot: () => SkImage | undefined;
+  clearCanvas: () => void;
+};
+export const Canvas = forwardRef<CanvasHandle, object>((_, ref) => {
+  const skiaCanvasRef = useCanvasRef();
   const cachedStrokes = useSharedValue<SkPath[]>([]);
   const currentStroke = useSharedValue("");
+
+  useImperativeHandle(ref, () => ({
+    makeImageSnapshot() {
+      return skiaCanvasRef.current?.makeImageSnapshot();
+    },
+    clearCanvas() {
+      currentStroke.value = "";
+      cachedStrokes.value = [];
+
+      skiaCanvasRef.current?.redraw();
+    },
+  }));
 
   const cachedPicture = useDerivedValue(
     () =>
@@ -52,7 +72,7 @@ export const Canvas = () => {
 
   return (
     <GestureDetector gesture={panGesture}>
-      <SkiaCanvas style={styles.canvas}>
+      <SkiaCanvas ref={skiaCanvasRef} style={styles.canvas}>
         <Picture picture={cachedPicture} />
         <Path
           path={currentStroke}
@@ -63,7 +83,7 @@ export const Canvas = () => {
       </SkiaCanvas>
     </GestureDetector>
   );
-};
+});
 
 const styles = StyleSheet.create({
   canvas: {
