@@ -45,7 +45,8 @@ export const Canvas = () => {
       currentStroke.value = '';
     })
     .minPointers(1)
-    .maxPointers(1);
+    .maxPointers(1)
+    .minDistance(1);
 
   return (
     <GestureDetector gesture={panGesture}>
