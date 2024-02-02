@@ -1,4 +1,4 @@
-import { Color, Skia } from "@shopify/react-native-skia";
+import { Color } from "@shopify/react-native-skia";
 import { StatusBar } from "expo-status-bar";
 import { useRef, useState } from "react";
 import {
