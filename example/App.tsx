@@ -1,11 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Canvas} from "react-native-signature";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Canvas } from "react-native-signature";
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style="auto" />
       <SafeAreaView style={styles.container}>
         <Text>Open up App.tsx to start working on your app!</Text>
@@ -20,9 +20,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   section: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
