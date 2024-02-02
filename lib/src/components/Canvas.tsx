@@ -1,5 +1,6 @@
 import {
   Canvas as SkiaCanvas,
+  type Color,
   createPicture,
   PaintStyle,
   Path,
@@ -19,71 +20,83 @@ export type CanvasHandle = {
   makeImageSnapshot: () => SkImage | undefined;
   clearCanvas: () => void;
 };
-export const Canvas = forwardRef<CanvasHandle, object>((_, ref) => {
-  const skiaCanvasRef = useCanvasRef();
-  const cachedStrokes = useSharedValue<SkPath[]>([]);
-  const currentStroke = useSharedValue("");
 
-  useImperativeHandle(ref, () => ({
-    makeImageSnapshot() {
-      return skiaCanvasRef.current?.makeImageSnapshot();
-    },
-    clearCanvas() {
-      currentStroke.value = "";
-      cachedStrokes.value = [];
+type CanvasProps = {
+  color: Color;
+};
 
-      skiaCanvasRef.current?.redraw();
-    },
-  }));
+export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
+  ({ color = "black" }, ref) => {
+    const skiaCanvasRef = useCanvasRef();
+    const cachedStrokes = useSharedValue<[SkPath, Color][]>([]);
+    const currentStroke = useSharedValue("");
 
-  const cachedPicture = useDerivedValue(
-    () =>
-      createPicture((canvas) => {
-        const paint = Skia.Paint();
-        paint.setStrokeWidth(2);
-        paint.setStrokeCap(StrokeCap.Round);
-        paint.setStyle(PaintStyle.Stroke);
+    useImperativeHandle(ref, () => ({
+      makeImageSnapshot() {
+        return skiaCanvasRef.current?.makeImageSnapshot();
+      },
+      clearCanvas() {
+        currentStroke.value = "";
+        cachedStrokes.value = [];
 
-        for (const stroke of cachedStrokes.value) {
-          canvas.drawPath(stroke, paint);
-        }
-      }),
-    [cachedStrokes],
-  );
+        skiaCanvasRef.current?.redraw();
+      },
+    }));
 
-  const panGesture = Gesture.Pan()
-    .onBegin((e) => {
-      currentStroke.value = `M ${e.x} ${e.y} L ${e.x} ${e.y}`;
-    })
-    .onChange((e) => {
-      currentStroke.value += ` L ${e.x} ${e.y}`;
-    })
-    .onFinalize(() => {
-      cachedStrokes.value = [
-        ...cachedStrokes.value,
-        Skia.Path.MakeFromSVGString(currentStroke.value) as SkPath,
-      ];
+    const cachedPicture = useDerivedValue(
+      () =>
+        createPicture((canvas) => {
+          const paint = Skia.Paint();
+          paint.setStrokeWidth(2);
+          paint.setStrokeCap(StrokeCap.Round);
+          paint.setStyle(PaintStyle.Stroke);
 
-      currentStroke.value = "";
-    })
-    .minPointers(1)
-    .maxPointers(1)
-    .minDistance(1);
+          for (const cachedStroke of cachedStrokes.value) {
+            const [stroke, strokeColor] = cachedStroke;
 
-  return (
-    <GestureDetector gesture={panGesture}>
-      <SkiaCanvas ref={skiaCanvasRef} style={styles.canvas}>
-        <Picture picture={cachedPicture} />
-        <Path
-          path={currentStroke}
-          color="black"
-          strokeWidth={2}
-          style="stroke"
-        />
-      </SkiaCanvas>
-    </GestureDetector>
-  );
-});
+            if (strokeColor) {
+              paint.setColor(Skia.Color(strokeColor));
+            }
+            canvas.drawPath(stroke, paint);
+          }
+        }),
+      [cachedStrokes],
+    );
+
+    const panGesture = Gesture.Pan()
+      .onBegin((e) => {
+        currentStroke.value = `M ${e.x} ${e.y} L ${e.x} ${e.y}`;
+      })
+      .onChange((e) => {
+        currentStroke.value += ` L ${e.x} ${e.y}`;
+      })
+      .onFinalize(() => {
+        cachedStrokes.value = [
+          ...cachedStrokes.value,
+          [Skia.Path.MakeFromSVGString(currentStroke.value) as SkPath, color],
+        ];
+
+        currentStroke.value = "";
+      })
+      .minPointers(1)
+      .maxPointers(1)
+      .minDistance(1);
+
+    return (
+      <GestureDetector gesture={panGesture}>
+        <SkiaCanvas ref={skiaCanvasRef} style={styles.canvas}>
+          <Picture picture={cachedPicture} />
+          <Path
+            path={currentStroke}
+            color={color}
+            strokeWidth={2}
+            style="stroke"
+          />
+        </SkiaCanvas>
+      </GestureDetector>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   canvas: {
