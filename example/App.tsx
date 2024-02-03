@@ -10,7 +10,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Gesture, GestureHandlerRootView } from "react-native-gesture-handler";
 import { Canvas, CanvasHandle } from "react-native-signature";
 
 type ColorOptionProps = {
@@ -52,6 +52,16 @@ export default function App() {
     setColor(color);
   };
 
+  const panGesture = Gesture.Pan()
+    .onBegin((e) => {})
+    .onChange((e) => {
+      console.log(`CUSTOM HANDLER ACTIVE ${e.x} ${e.y}`);
+    })
+    .onFinalize(() => {})
+    .minPointers(1)
+    .maxPointers(1)
+    .minDistance(1);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style="auto" />
@@ -74,7 +84,12 @@ export default function App() {
           />
         )}
         <View style={styles.section}>
-          <Canvas ref={canvasRef} strokeColor={color} strokeWidth={6} />
+          <Canvas
+            ref={canvasRef}
+            strokeColor={color}
+            strokeWidth={6}
+            gestureHandler={panGesture}
+          />
         </View>
       </SafeAreaView>
     </GestureHandlerRootView>

@@ -13,7 +13,11 @@ import {
 } from "@shopify/react-native-skia";
 import { forwardRef, useImperativeHandle } from "react";
 import { StyleSheet } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  Gesture,
+  GestureDetector,
+  type GestureType,
+} from "react-native-gesture-handler";
 import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 
 export type CanvasHandle = {
@@ -24,12 +28,13 @@ export type CanvasHandle = {
 type CanvasProps = {
   strokeColor?: Color;
   strokeWidth?: number;
+  gestureHandler?: GestureType;
 };
 
-type StrokeDetails = Required<CanvasProps>;
+type StrokeDetails = Required<Pick<CanvasProps, "strokeColor" | "strokeWidth">>;
 
 export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
-  ({ strokeColor = "black", strokeWidth = 2 }, ref) => {
+  ({ strokeColor = "black", strokeWidth = 2, gestureHandler }, ref) => {
     const skiaCanvasRef = useCanvasRef();
     const cachedStrokes = useSharedValue<[SkPath, StrokeDetails][]>([]);
     const currentStroke = useSharedValue("");
@@ -88,8 +93,12 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
       .maxPointers(1)
       .minDistance(1);
 
+    const composedHandler = gestureHandler
+      ? Gesture.Simultaneous(panGesture, gestureHandler)
+      : panGesture;
+
     return (
-      <GestureDetector gesture={panGesture}>
+      <GestureDetector gesture={composedHandler}>
         <SkiaCanvas ref={skiaCanvasRef} style={styles.canvas}>
           <Picture picture={cachedPicture} />
           <Path
