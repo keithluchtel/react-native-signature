@@ -74,7 +74,7 @@ export default function App() {
           />
         )}
         <View style={styles.section}>
-          <Canvas ref={canvasRef} color={color} />
+          <Canvas ref={canvasRef} strokeColor={color} strokeWidth={6} />
         </View>
       </SafeAreaView>
     </GestureHandlerRootView>

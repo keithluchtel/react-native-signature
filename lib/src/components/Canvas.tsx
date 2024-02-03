@@ -22,13 +22,16 @@ export type CanvasHandle = {
 };
 
 type CanvasProps = {
-  color: Color;
+  strokeColor?: Color;
+  strokeWidth?: number;
 };
 
+type StrokeDetails = Required<CanvasProps>;
+
 export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
-  ({ color = "black" }, ref) => {
+  ({ strokeColor = "black", strokeWidth = 2 }, ref) => {
     const skiaCanvasRef = useCanvasRef();
-    const cachedStrokes = useSharedValue<[SkPath, Color][]>([]);
+    const cachedStrokes = useSharedValue<[SkPath, StrokeDetails][]>([]);
     const currentStroke = useSharedValue("");
 
     useImperativeHandle(ref, () => ({
@@ -47,16 +50,16 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
       () =>
         createPicture((canvas) => {
           const paint = Skia.Paint();
-          paint.setStrokeWidth(2);
           paint.setStrokeCap(StrokeCap.Round);
           paint.setStyle(PaintStyle.Stroke);
 
           for (const cachedStroke of cachedStrokes.value) {
-            const [stroke, strokeColor] = cachedStroke;
+            const [stroke, details] = cachedStroke;
+            const { strokeColor, strokeWidth } = details;
 
-            if (strokeColor) {
-              paint.setColor(Skia.Color(strokeColor));
-            }
+            paint.setColor(Skia.Color(strokeColor));
+            paint.setStrokeWidth(strokeWidth);
+
             canvas.drawPath(stroke, paint);
           }
         }),
@@ -73,7 +76,10 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
       .onFinalize(() => {
         cachedStrokes.value = [
           ...cachedStrokes.value,
-          [Skia.Path.MakeFromSVGString(currentStroke.value) as SkPath, color],
+          [
+            Skia.Path.MakeFromSVGString(currentStroke.value) as SkPath,
+            { strokeColor, strokeWidth },
+          ],
         ];
 
         currentStroke.value = "";
@@ -88,8 +94,8 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
           <Picture picture={cachedPicture} />
           <Path
             path={currentStroke}
-            color={color}
-            strokeWidth={2}
+            color={strokeColor}
+            strokeWidth={strokeWidth}
             style="stroke"
           />
         </SkiaCanvas>
