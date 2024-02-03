@@ -1,15 +1,21 @@
 {
-  "name": "react-native-signature",
+  "name": "@noxother/signature",
   "version": "1.0.0",
+  "author": "Keith Luchtel",
   "private": false,
-  "description": "",
+  "description": "A react native signature canvas built on skia",
+  "repository": "https://github.com/keithluchtel/react-native-signature",
   "main": "dist/commonjs/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "bob build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "react-native",
+    "signature",
+    "signature-pad",
+    "signature-canvas",
+    "skia"
+  ],
   "license": "MIT",
   "devDependencies": {
     "react-native-builder-bob": "^0.23.2"
