@@ -1,6 +1,6 @@
 {
   "name": "@noxother/signature",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Keith Luchtel",
   "private": false,
   "description": "A react native signature canvas built on skia",
