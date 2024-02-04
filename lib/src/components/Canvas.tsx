@@ -106,6 +106,7 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
             color={strokeColor}
             strokeWidth={strokeWidth}
             style="stroke"
+            strokeCap="round"
           />
         </SkiaCanvas>
       </GestureDetector>
