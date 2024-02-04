@@ -1,3 +1,4 @@
+import { Canvas, CanvasHandle } from "@noxother/signature";
 import { Color } from "@shopify/react-native-skia";
 import { StatusBar } from "expo-status-bar";
 import { useRef, useState } from "react";
@@ -11,7 +12,6 @@ import {
   View,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Canvas, CanvasHandle } from "react-native-signature";
 
 type ColorOptionProps = {
   color: Color;
