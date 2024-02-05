@@ -2,15 +2,7 @@ import { Canvas, CanvasHandle } from "@noxother/signature";
 import { Color } from "@shopify/react-native-skia";
 import { StatusBar } from "expo-status-bar";
 import { useRef, useState } from "react";
-import {
-  Button,
-  Image,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 type ColorOptionProps = {
@@ -23,10 +15,12 @@ const ColorOption = ({ color, onPress }: ColorOptionProps) => {
       <View
         // @ts-ignore-next-line
         style={{
-          width: 30,
-          height: 30,
+          width: 50,
+          height: 50,
           borderRadius: 15,
           backgroundColor: color,
+          borderColor: "black",
+          borderWidth: 3,
         }}
       />
     </Pressable>
@@ -35,18 +29,10 @@ const ColorOption = ({ color, onPress }: ColorOptionProps) => {
 
 export default function App() {
   const canvasRef = useRef<CanvasHandle>(null);
-  const [image, setImage] = useState<string | undefined>(undefined);
   const resetHandler = () => {
     canvasRef.current?.clearCanvas();
   };
   const [color, setColor] = useState<Color | undefined>(undefined);
-
-  const captureHandler = () => {
-    const skiaImage = canvasRef.current?.makeImageSnapshot();
-    if (skiaImage) {
-      setImage(skiaImage.encodeToBase64());
-    }
-  };
 
   const colorPressHandler = (color: Color) => {
     setColor(color);
@@ -56,24 +42,27 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style="auto" />
       <SafeAreaView style={styles.container}>
-        <Text>Open up App.tsx to start working on your app!</Text>
-        <View style={{ flexDirection: "row", gap: 20 }}>
-          <ColorOption color="red" onPress={colorPressHandler} />
-          <ColorOption color="blue" onPress={colorPressHandler} />
-          <ColorOption color="green" onPress={colorPressHandler} />
-          <ColorOption color="purple" onPress={colorPressHandler} />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: 20,
+          }}
+        >
+          <View style={{ flexDirection: "row", gap: 20 }}>
+            <ColorOption color="red" onPress={colorPressHandler} />
+            <ColorOption color="blue" onPress={colorPressHandler} />
+            <ColorOption color="green" onPress={colorPressHandler} />
+            <ColorOption color="purple" onPress={colorPressHandler} />
+          </View>
+          <Pressable style={styles.resetButton} onPress={resetHandler}>
+            <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
+              Reset
+            </Text>
+          </Pressable>
         </View>
-        <Button title="Reset" onPress={resetHandler} />
-        <Button title="Capture" onPress={captureHandler} />
-        {image && (
-          <Image
-            style={{ width: 100, height: 200 }}
-            resizeMode="contain"
-            resizeMethod="scale"
-            source={{ uri: `data:image/png;base64,${image}` }}
-          />
-        )}
-        <View style={styles.section}>
+        <View style={styles.canvasContainer}>
           <Canvas ref={canvasRef} strokeColor={color} strokeWidth={6} />
         </View>
       </SafeAreaView>
@@ -86,7 +75,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
-  section: {
+  canvasContainer: {
     flex: 1,
+    borderWidth: 2,
+    borderColor: "lightgrey",
+    borderStyle: "dashed",
+    marginBottom: 20,
+  },
+  resetButton: {
+    backgroundColor: "black",
+    paddingVertical: 15,
+    paddingHorizontal: 50,
+    borderRadius: 25,
   },
 });
