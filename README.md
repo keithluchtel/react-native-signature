@@ -2,6 +2,8 @@
 
 A signature canvas -- built with Skia
 
+![2024-02-05 21 42 10](https://github.com/keithluchtel/react-native-signature/assets/475007/13749e0d-974c-484c-aa5d-c68ced62e840)
+
 ## Installation
 
 `@noxother/signature` has a few peer dependencies which must be installed first if not already present in your project
