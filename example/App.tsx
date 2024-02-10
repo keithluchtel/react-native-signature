@@ -32,6 +32,11 @@ export default function App() {
   const resetHandler = () => {
     canvasRef.current?.clearCanvas();
   };
+
+  const undoHandler = () => {
+    canvasRef.current?.undo();
+  };
+
   const [color, setColor] = useState<Color | undefined>(undefined);
 
   const colorPressHandler = (color: Color) => {
@@ -56,11 +61,14 @@ export default function App() {
             <ColorOption color="green" onPress={colorPressHandler} />
             <ColorOption color="purple" onPress={colorPressHandler} />
           </View>
-          <Pressable style={styles.resetButton} onPress={resetHandler}>
-            <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
-              Reset
-            </Text>
-          </Pressable>
+          <View style={{ flexDirection: "row", gap: 20 }}>
+            <Pressable style={styles.resetButton} onPress={undoHandler}>
+              <Text style={styles.buttonText}>Undo</Text>
+            </Pressable>
+            <Pressable style={styles.resetButton} onPress={resetHandler}>
+              <Text style={styles.buttonText}>Reset</Text>
+            </Pressable>
+          </View>
         </View>
         <View style={styles.canvasContainer}>
           <Canvas ref={canvasRef} strokeColor={color} strokeWidth={6} />
@@ -87,5 +95,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 25,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: "white",
+    fontWeight: "bold",
   },
 });

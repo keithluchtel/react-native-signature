@@ -23,6 +23,7 @@ import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 export type CanvasHandle = {
   makeImageSnapshot: () => SkImage | undefined;
   clearCanvas: () => void;
+  undo: () => void;
 };
 
 type CanvasProps = {
@@ -47,6 +48,10 @@ export const Canvas = forwardRef<CanvasHandle, CanvasProps>(
         currentStroke.value = "";
         cachedStrokes.value = [];
 
+        skiaCanvasRef.current?.redraw();
+      },
+      undo() {
+        cachedStrokes.value = cachedStrokes.value.slice(0, -1);
         skiaCanvasRef.current?.redraw();
       },
     }));
